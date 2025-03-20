@@ -7,7 +7,7 @@ import { Stats } from "./_components/stats/Stats";
 
 const Page = () => {
   return (
-    <section className="flex flex-col lg:flex-row gap-2 px-6 ">
+    <section className="flex flex-col lg:flex-row gap-2 px-6 w-full ">
       <Stats />
       <Income />
       <Expense />

@@ -15,9 +15,9 @@ export const FilterButton: React.FC<FilterButtonProps> = ({
 }) => {
   return (
     <button
-      className={`bg-header hover:${color} ${
-        selectedFilter === title ? color : ""
-      } duration-300 border-b border-base/50 text-base py-1 w-full`}
+      className={` hover:${color} ${
+        selectedFilter === title ? color : "bg-header"
+      } duration-300 border-b border-base/50 text-base py-1 w-full `}
       onClick={onClick}
     >
       {title}

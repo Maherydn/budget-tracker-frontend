@@ -1,5 +1,8 @@
+"use client"
 import React from "react";
 import { Header } from "./_components/Header";
+import { RefreshProvider } from "./_hook/RefreshContext";
+import { DateContextProvider } from "./_context/DateContext";
 
 const Layout = ({
   children,
@@ -8,8 +11,12 @@ const Layout = ({
 }>) => {
   return (
     <main className="bg-base w-full overflow-hidden">
-        <Header/>
-        {children}
+      <RefreshProvider>
+        <DateContextProvider>
+          <Header />
+          {children}
+        </DateContextProvider>
+      </RefreshProvider>
     </main>
   );
 };

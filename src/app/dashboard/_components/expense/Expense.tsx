@@ -1,38 +1,77 @@
-import React, { useState } from "react";
-import { ExpenseFilter } from "./ExpenseFilter";
+import React, { useEffect, useState } from "react";
 import { TransactionItem } from "../TransactionItem";
+import { FormModal, FormData } from "../modals/FormModal";
+import { ExpenseFilter } from "./ExpenseFilter";
+import DetailModal from "../modals/DetailModal";
+import { useDateContext } from "../../_context/DateContext";
+import { fetchExpenseTransactions } from "../../_service/transactionTypeService";
+import { useRefresh } from "../../_hook/RefreshContext";
 
 export const Expense = () => {
   const [selectedFilter, setSelectedFilter] = useState<string>();
+  const [isFormModalOpen, setIsFromModalOpen] = useState<boolean>(false);
+  const [editTransaction, setEditTransaction] = useState<FormData | null>(null);
+
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState<boolean>(false);
+  const [detailTransaction, setDetailTransaction] = useState<FormData | null>(
+    null
+  );
+
+  const [transactions, setTransactions] = useState<FormData[]>([]);
+
+  const { year, month } = useDateContext();
+
+  const { refresh } = useRefresh();
 
   const handleSetFilter = (filter: string) => {
     setSelectedFilter(filter);
-    console.log(selectedFilter);
+    // console.log(selectedFilter);
   };
 
-  const transactions = [
-    { category: "Food", date: "January 12, 2023", amount: 25.5 },
-    { category: "Food", date: "January 15, 2023", amount: 30.75 },
-    { category: "Food", date: "February 2, 2023", amount: 12.4 },
-    { category: "Doc", date: "February 10, 2023", amount: 100 },
-    { category: "Doc", date: "March 5, 2023", amount: 250 },
-    { category: "Doc", date: "March 20, 2023", amount: 75.99 },
-    { category: "Salary", date: "April 1, 2023", amount: 2800 },
-    { category: "Salary", date: "May 1, 2023", amount: 2900 },
-    { category: "Salary", date: "June 1, 2023", amount: 3000 },
-    { category: "Test", date: "June 15, 2023", amount: 50 },
-    { category: "Test", date: "July 3, 2023", amount: 75 },
-    { category: "Test", date: "July 20, 2023", amount: 90.25 },
-    { category: "Test", date: "August 5, 2023", amount: 110 },
-  ];
-
+  // Appliquer le filtre aux transactions
   const transactionsFilter = transactions.filter((transaction) => {
     if (selectedFilter?.toLowerCase() === "all") {
       return true;
     }
 
-    return transaction.category.toLowerCase() === selectedFilter?.toLowerCase();
+    return (
+      transaction.transactionCategory.name.toLowerCase() ===
+      selectedFilter?.toLowerCase()
+    );
   });
+
+  const openFormModal = (transaction: FormData | null = null) => {
+    setEditTransaction(transaction);
+    setIsFromModalOpen(true);
+  };
+
+  const closeFormModal = () => {
+    setIsFromModalOpen(false);
+    setEditTransaction(null);
+  };
+
+  const openDetailModal = (transaction: FormData | null = null) => {
+    setDetailTransaction(transaction);
+    setIsDetailModalOpen(true);
+  };
+
+  const closeDetailModal = () => {
+    setIsDetailModalOpen(false);
+    setDetailTransaction(null);
+  };
+
+  useEffect(() => {
+    const loadTransactions = async () => {
+      try {
+        const data = await fetchExpenseTransactions(year, month);
+        setTransactions(data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    loadTransactions();
+  }, [year, month, refresh]);
 
   return (
     <div className="border-t border-header/50 mx-6 my-4 flex flex-col lg:w-1/3 lg:border-none">
@@ -44,18 +83,37 @@ export const Expense = () => {
       </div>
       <div className="h-96 overflow-y-scroll px-4">
         {transactionsFilter.map((transaction, index) => (
-          <TransactionItem
-            key={index}
-            category={transaction.category}
-            amount={transaction.amount}
-            date={transaction.date}
-            color="bg-yellow"
-          />
+          <div key={index}>
+            <TransactionItem
+              category={transaction.transactionCategory.name}
+              amount={transaction.amount}
+              createdAt={transaction.createdAt}
+              color="bg-yellow"
+              // id={transaction.id}
+              onEdit={() => openFormModal(transaction)}
+              onDetail={() => openDetailModal(transaction)}
+            />
+          </div>
         ))}
       </div>
-      <button className="px-2 mt-4 py-1 text-xl w-1/2 rounded-full mx-auto text-white hover:bg-yellow hover:text-base duration-300 border border-yellow">
+      <button
+        onClick={() => openFormModal()}
+        className="px-2 py-1 text-xl w-1/2 rounded-full mx-auto text-white hover:bg-yellow hover:text-base duration-300 border border-yellow mt-4"
+      >
         Expense
       </button>
+
+      <FormModal
+        isOpen={isFormModalOpen}
+        onClose={closeFormModal}
+        existingData={editTransaction}
+        isIncome={false}
+      />
+      <DetailModal
+        isOpen={isDetailModalOpen}
+        formData={detailTransaction}
+        onClose={closeDetailModal}
+      />
     </div>
   );
 };

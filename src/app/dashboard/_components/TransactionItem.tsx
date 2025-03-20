@@ -1,18 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
+import { PointIcon } from "../_assets/icons";
+import { TransactionItemAction } from "./TransactionItemAction";
+import { formaDate } from "../_utils/formatDate";
 
 interface TransactionItemProps {
   category: string;
-  date: string;
+  createdAt?: string;
   amount: number;
   color: string;
+  // id: number;
+  onEdit: () => void;
+  onDetail: () => void;
 }
 
 export const TransactionItem: React.FC<TransactionItemProps> = ({
   category,
-  date,
+  createdAt,
   amount,
   color,
+  // id,
+  onEdit,
+  onDetail
 }) => {
+  const [showTransactionItemAction, setShowTransactionItemAction] =
+    useState<boolean>(true);
   return (
     <div className="flex justify-between items-center h-24 border-dashed border-t border-header/50 relative">
       <div className="flex gap-2">
@@ -35,39 +46,20 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
           <h3 className="text-xl text-header font-montserrat font-semibold">
             {category}
           </h3>
-          <p className="text-md text-header/60 font-montserrat">{date}</p>
+          <p className="text-md text-header/60 font-montserrat">{formaDate(createdAt)}</p>
         </div>
       </div>
-      <p className="text-2xl font-montserrat text-header">{amount} ar</p>
-      <div className="text-header absolute top-0 right-0">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          className="size-6"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
-          />
-        </svg>
-        <div className=" bg-slate-200 absolute top-0 right-0 rounded-sm hidden ">
-
-        <div className=" flex flex-col font-extralight font-poppins ">
-          <button className="border-b border-base/50 pyn-0.5 px-4 text-gray-800 hover:bg-gray-600 hover:text-white duration-300 rounded-t-sm cursor-pointer">
-            Details
-          </button>
-          <button className="border-b border-base/50 pyn-0.5 px-4 text-gray-800 hover:bg-gray-600 hover:text-white duration-300 cursor-pointer">
-            Update
-          </button>
-          <button className="px-4 text-red-800 hover:bg-red-600 hover:text-white duration-300 rounded-b-sm pyn-0.5 cursor-pointer">
-            Delete
-          </button>
-        </div>
-        </div>
+      <p className="lg:text-xl font-montserrat sm:block hidden text-header">{amount} ar</p>
+      <div
+        className="text-header absolute top-0 right-0 cursor-pointer"
+        onClick={() => setShowTransactionItemAction(!showTransactionItemAction)}
+      >
+        <PointIcon />
+        <TransactionItemAction
+          onEdit={onEdit}
+          onDetail={onDetail}
+          showTransactionItemAction={showTransactionItemAction}
+        />
       </div>
     </div>
   );

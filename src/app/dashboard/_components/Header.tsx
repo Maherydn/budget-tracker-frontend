@@ -1,7 +1,12 @@
+"use client"
 import React from 'react'
 import { LogoIcon, UserIcon } from '../_assets/icons'
+import { AuthContextType, useAuth } from '@/app/_contexts/AuthContex';
 
 export const Header = () => {
+
+  const { user  } = useAuth() as AuthContextType;
+  
   return (
     <header
         className="mx-6 h-32 flex flex-col justify-center items-start lg:flex-row lg:items-center lg:justify-between gap-2 border-b border-border/50"
@@ -19,7 +24,7 @@ export const Header = () => {
            <UserIcon/>
           </div>
           <h3 className="text-header font-montserrat font-medium">
-            Welcome Alexander
+            Welcome <span className='capitalize'>{user?.username}</span>
           </h3>
         </div>
       </header>

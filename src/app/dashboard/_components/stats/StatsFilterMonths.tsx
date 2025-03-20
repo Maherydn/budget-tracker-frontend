@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { FilterButton } from "../FilterButton";
 import { DropIcon } from "../../_assets/icons";
+import { useDateContext } from "../../_context/DateContext";
 
 interface StatsFilterMonthsPorps {
   setMonth: (month: string) => void;
@@ -10,7 +11,12 @@ interface StatsFilterMonthsPorps {
 
 export const StatsFilterMonths: React.FC<StatsFilterMonthsPorps> = ({setMonth}) => {
   const [showMonths, setShowMonths] = useState<boolean>(false); 
-  const [selectedMonth, setSelectedMonth] = useState<string>("janvier");
+  const { month, year } = useDateContext();
+
+  const monthName = new Date(year, month).toLocaleString('fr-FR', { month: 'long' });
+
+  const [selectedMonth, setSelectedMonth] = useState<string>(monthName);
+  
 
    useEffect(() => {
       setMonth(selectedMonth);
@@ -47,7 +53,7 @@ export const StatsFilterMonths: React.FC<StatsFilterMonthsPorps> = ({setMonth}) 
           </div>
 
           <div className="flex items-center justify-evenly size-full  ">
-            <button className="text-base w-1/3 cursor-pointer font-poppins font-semibold text-xl">{selectedMonth}</button>
+            <button className="text-base w-1/3 cursor-pointer font-poppins font-semibold text-xl capitalize">{selectedMonth}</button>
             <div className="text-base ">
               <DropIcon />
             </div>

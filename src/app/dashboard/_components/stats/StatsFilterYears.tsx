@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { FilterButton } from "../FilterButton";
 import { DropIcon } from "../../_assets/icons";
+import { useDateContext } from "../../_context/DateContext";
 
 interface StatsFilterYearsPorps {
     setYear: (year: number) => void;
@@ -10,7 +11,9 @@ interface StatsFilterYearsPorps {
 
 export const StatsFilterYears: React.FC<StatsFilterYearsPorps> = ({setYear}) => {
   const [showYears, setShowYears] = useState<boolean>(false); 
-  const [selectedYear, setSelectedYear] = useState<number>(2025);
+  const { year } = useDateContext();
+  const [selectedYear, setSelectedYear] = useState<number>(year);
+  
 
   useEffect(() => {
     setYear(selectedYear);
